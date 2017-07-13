@@ -1,0 +1,37 @@
+h1
+{
+    text-align: center;
+    font-size: 24px;
+    margin: 5px 0;
+}
+
+h2
+{
+    text-align: center;
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+h3
+{
+    text-align: center;
+    font-style: italic;
+    font-size: 14px;
+    font-weight: normal;
+    margin: 5px 0;
+}
+
+canvas
+{
+  border: 2px solid black;
+}
+
+#main
+{
+  margin: 25px 0;
+}
+
+#all-res > p
+{
+  margin: 5px;
+}

@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Hand Written Digit Recognition</title>
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+  </head>
+  <body>
+    <div id="title">
+      <h1>Hand Written Digit Recognition</h1>
+      <h3>With a Simple One-hidden-layer Neural Network</h3>
+      <h2>Made by TsReaper.&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/TsReaper/Hand-Written-Digit-Recognition">Find this project on GitHub</a>.</h2>
+    </div>
+    
+    <div id="main">
+      <table align="center">
+        <col width="284px" />
+        <col width="284px" />
+        <col width="284px" />
+        <thead>
+          <tr>
+            <th>Input</th>
+            <th rowspan="2">Processed</th>
+            <th rowspan="2">Result</th>
+          </tr>
+          <tr>
+            <th>Draw your digit here</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><canvas id="input" width="280px" height="280px"></canvas></td>
+            <td><canvas id="processed" width="280px" height="280px"></canvas></td>
+            <td>
+              <div style="float: left; text-align: center; width: 180px;">
+                <p id="result" style="font-size: 150px; margin: 0;"></p>
+                <p id="res-confidence"></p>
+              </div>
+              <div id="all-res" style="float: left; width: 100px;">
+                <p id="res-0"></p>
+                <p id="res-1"></p>
+                <p id="res-2"></p>
+                <p id="res-3"></p>
+                <p id="res-4"></p>
+                <p id="res-5"></p>
+                <p id="res-6"></p>
+                <p id="res-7"></p>
+                <p id="res-8"></p>
+                <p id="res-9"></p>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="3">
+              <button id="button" type="button">Clear</button>
+              &lt; Click this button or right click mouse on canvas to clear
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    
+    
+    <script type="text/javascript" src="js/canvas_wrapper.js"></script>
+    <script type="text/javascript" src="js/preprocess.js"></script>
+    <script type="text/javascript" src="js/network.js"></script>
+    <script type="text/javascript" src="js/json.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+  </body>
+</html>
