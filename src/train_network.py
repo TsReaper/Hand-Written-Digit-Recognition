@@ -1,5 +1,5 @@
-import data_loader
-from network import Network
+import utils.data_loader as data_loader
+from network.network import Network
 import numpy as np
 
 training_data, validation_data, test_data = data_loader.load_data()

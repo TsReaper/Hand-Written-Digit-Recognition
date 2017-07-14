@@ -1,13 +1,15 @@
 import numpy as np
 import json
 
+from cost.quadratic import Quadratic
+
 class Network:
 
-    def __init__(self, size):
+    def __init__(self, size, cost = Quadratic):
         self.size = size
+        self.cost = cost
         self.layers = len(size)
 
-        # Set initial weights and biases to 0
         self.weights = [np.random.randn(x, y) for x, y in zip(size[1:], size[:-1])]
         self.biases = [np.random.randn(x) for x in size[1:]]
 
@@ -27,13 +29,14 @@ class Network:
                 else:
                     batch_num = batch_size
 
-                delta_w, delta_b = self.sgd(data_set[j:j + batch_num], label_set[j:j + batch_num])
-                self.weights = [x - learn_rate/batch_num * y for x, y in zip(self.weights, delta_w)]
-                self.biases = [x - learn_rate/batch_num * y for x, y in zip(self.biases, delta_b)]
+                # Stochastic gradient descent
+                delta_w, delta_b = self.process_batch(data_set[j:j + batch_num], label_set[j:j + batch_num])
+                self.weights = [x - learn_rate/(2*batch_num) * y for x, y in zip(self.weights, delta_w)]
+                self.biases = [x - learn_rate/(2*batch_num) * y for x, y in zip(self.biases, delta_b)]
 
             print('Epoch %d/%d' % (i+1, epoch))
 
-    def sgd(self, data_set, label_set):
+    def process_batch(self, data_set, label_set):
         delta_w = [np.zeros((x, y)) for x, y in zip(self.size[1:], self.size[:-1])]
         delta_b = [np.zeros((x)) for x in self.size[1:]]
 
@@ -54,13 +57,13 @@ class Network:
         # Back propergation
         delta_w = [None for i in range(self.layers-1)]
         delta_b = [None for i in range(self.layers-1)]
-        error = (a[-1] - label) * delta_sigmoid(z[-1])
+        error = self.cost.gradient(a[-1], label) * sigmoid_diff(z[-1])
 
         for i in range(self.layers-2, -1, -1):
             delta_b[i] = error
             delta_w[i] = np.array(np.mat(error).T * np.mat(a[i]))
             if i > 0:
-                error = np.dot(self.weights[i].T, error) * delta_sigmoid(z[i-1])
+                error = np.dot(self.weights[i].T, error) * sigmoid_diff(z[i-1])
 
         return delta_w, delta_b
 
@@ -80,5 +83,5 @@ class Network:
 def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
 
-def delta_sigmoid(x):
+def sigmoid_diff(x):
     return sigmoid(x) * (1 - sigmoid(x))

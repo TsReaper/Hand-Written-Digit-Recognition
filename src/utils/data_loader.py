@@ -7,15 +7,26 @@ def load_data():
     # Download data if not exist
     if not os.path.exists('mnist.pkl.gz'):
         print('Data not found. Downloading data...')
+
         try:
             import requests
-            content = requests.get('https://raw.githubusercontent.com/mnielsen/neural-networks-and-deep-learning/master/data/mnist.pkl.gz')
+            url = 'https://raw.githubusercontent.com/mnielsen/neural-networks-and-deep-learning/master/data/mnist.pkl.gz'
+            response = requests.get(url, stream = True)
+            total_length = int(response.headers.get('content-length'))
+
             f = open('mnist.pkl.gz', 'wb')
-            f.write(content)
+            dl = 0
+            for data in response.iter_content(chunk_size = 4096):
+                dl += len(data)
+                f.write(data)
+                done = int(50 * dl / total_length)
+                print('\r[%s%s]' % ('=' * done, ' ' * (50 - done)), end = '', flush = True)
             f.close()
-            print('Data successfully downloaded')
+
+            print('\nData successfully downloaded')
         except:
-            print('Failed to download data. Please download manually from https://raw.githubusercontent.com/mnielsen/neural-networks-and-deep-learning/master/data/mnist.pkl.gz')
+            print('\nFailed to download data. Please download manually from ' + url)
+            exit()
     
     f = gzip.open('mnist.pkl.gz', 'rb')
     training_data, validation_data, test_data = pickle.load(f, encoding = 'bytes')
