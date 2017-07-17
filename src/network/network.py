@@ -1,6 +1,7 @@
 import numpy as np
 import json
 
+import utils.math as math
 from cost.quadratic import Quadratic
 
 class Network:
@@ -15,24 +16,24 @@ class Network:
 
     def predict(self, data):
         for i in range(self.layers-1):
-            data = sigmoid(np.dot(self.weights[i], data) + self.biases[i])
+            data = math.sigmoid(np.dot(self.weights[i], data) + self.biases[i])
         return data
 
     def train(self, data_set, label_set, learn_rate, epoch, batch_size):
-        data_num = len(data_set)
+        self.train_size = len(data_set)
 
         for i in range(epoch):
             # Train network in batches
-            for j in range(0, data_num, batch_size):
-                if j + batch_size >= data_num:
-                    batch_num = data_num - j
+            for j in range(0, self.train_size, batch_size):
+                if j + batch_size >= self.train_size:
+                    batch_num = self.train_size - j
                 else:
                     batch_num = batch_size
 
                 # Stochastic gradient descent
                 delta_w, delta_b = self.process_batch(data_set[j:j + batch_num], label_set[j:j + batch_num])
-                self.weights = [x - learn_rate/(2*batch_num) * y for x, y in zip(self.weights, delta_w)]
-                self.biases = [x - learn_rate/(2*batch_num) * y for x, y in zip(self.biases, delta_b)]
+                self.weights = [x - learn_rate/batch_num * y for x, y in zip(self.weights, delta_w)]
+                self.biases = [x - learn_rate/batch_num * y for x, y in zip(self.biases, delta_b)]
 
             print('Epoch %d/%d' % (i+1, epoch))
 
@@ -52,18 +53,18 @@ class Network:
         a, z = [data], []
         for i in range(self.layers-1):
             z.append(np.dot(self.weights[i], a[-1]) + self.biases[i])
-            a.append(sigmoid(z[-1]))
+            a.append(math.sigmoid(z[-1]))
 
         # Back propergation
         delta_w = [None for i in range(self.layers-1)]
         delta_b = [None for i in range(self.layers-1)]
-        error = self.cost.gradient(a[-1], label) * sigmoid_diff(z[-1])
+        error = self.cost.gradient(a[-1], label) * math.sigmoid_diff(z[-1])
 
         for i in range(self.layers-2, -1, -1):
             delta_b[i] = error
             delta_w[i] = np.array(np.mat(error).T * np.mat(a[i]))
             if i > 0:
-                error = np.dot(self.weights[i].T, error) * sigmoid_diff(z[i-1])
+                error = np.dot(self.weights[i].T, error) * math.sigmoid_diff(z[i-1])
 
         return delta_w, delta_b
 
@@ -79,9 +80,3 @@ class Network:
         b = list(map(lambda x: x.tolist(), self.biases))
         d = {'size': size, 'weights': w, 'biases': b}
         return json.dumps(d)
-
-def sigmoid(x):
-    return 1.0 / (1.0 + np.exp(-x))
-
-def sigmoid_diff(x):
-    return sigmoid(x) * (1 - sigmoid(x))

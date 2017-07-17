@@ -1,12 +1,24 @@
+import numpy as np
+
 import utils.data_loader as data_loader
 from network.network import Network
-import numpy as np
+from network.network_improved import NetworkImproved
 
 training_data, validation_data, test_data = data_loader.load_data()
 
 # Train network
-my_network = Network((784, 50, 10))
-my_network.train(*training_data, 3.0, 30, 10)
+print('Which network do you want to train?')
+print('1. Basic network')
+print('2. Network improved')
+n = int(input())
+
+if n == 1:
+    my_network = Network((784, 50, 10))
+    my_network.train(*training_data, 3.0, 30, 10)
+elif n == 2:
+    my_network = NetworkImproved((784, 50, 10))
+    my_network.setAttribs(l2_norm = True)
+    my_network.train(*training_data, 0.5, 30, 10)
 
 # Test network
 correct, tot = 0, len(test_data[0])
